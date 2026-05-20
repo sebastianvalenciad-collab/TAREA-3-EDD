@@ -96,6 +96,36 @@ State crearEstadoInicial(int maze[N][N], int dificultad){
     return estado;
 }
 
+void dfs(State inicial)
+{
+    List* stack = list_create();
+    list_pushBack(stack, &inicial);
+    int visitado[N][N] = {0};
+
+    while(list_size(stack) > 0)
+    {
+        State* current = list_popBack(stack);
+        if(visitado[current->x][current->y]) continue;
+        
+        visitado[current->x][current->y] = 1;
+        if(is_final(current))
+        {
+            printf("SOLUCION DFS\n");
+            printf("Pasos: %d\n", current->steps);
+            return;
+        }
+
+        List* vecinos = get_adjacent_nodes(current);
+        State* next = list_first(vecinos);
+        
+        while(next != NULL)
+        {
+            list_pushBack(stack, next);
+            next = list_next(vecinos);
+        }
+    }
+}
+
 int main() {
     // Inicializar la semilla de aleatoriedad
     srand(time(NULL));
@@ -159,7 +189,7 @@ int main() {
 
         switch (opcion) {
         case '1':
-          //dfs(estado_inicial);
+          dfs(estado_inicial);  
           break;
         case '2':
           //bfs(estado_inicial);
