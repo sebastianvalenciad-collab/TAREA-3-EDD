@@ -11,6 +11,7 @@
 #define IZQUIERDA 2
 #define DERECHA 3
 
+
 // Definición de la estructura para el estado del puzzle
 typedef struct {
     int maze[N][N]; // Matriz NxN que representa el tablero
@@ -34,13 +35,24 @@ int is_final(State* state)
 State* transition(State* current, int pos)
 {
     State* next = malloc(sizeof(State));
-    memcpy(next, current, sizeof(State));
+    next->x = current->x;
+    next->y = current->y;
+    next->steps = current->steps + 1;
+    next->actions = NULL;
 
+    for(int i = 0; i < N; i++)
+    {
+        for(int k = 0; k < N; k++)
+        {
+            next->maze[i][k] = current->maze[i][k];
+        }
+    }
+    
     if(pos == ARRIBA) next->x--;
     else if(pos == ABAJO) next->x++;
     else if(pos == IZQUIERDA) next->y--;
     else if(pos == DERECHA) next->y++;
-    next->steps++;
+    
     return next;
 }
 
@@ -57,13 +69,12 @@ List* get_adjacent_nodes(State* current)
             continue;
         }
         
-        if(next->maze[next->x][next->y] == 1)
+        if(current->maze[next->x][next->y] == 1)
         {
             free(next);
             continue;
         }
 
-        list_pushBack(next->actions, (void*)(long)pos);
         list_pushBack(vecinos, next);
     }
     return vecinos;
@@ -98,8 +109,12 @@ State crearEstadoInicial(int maze[N][N], int dificultad){
 
 void dfs(State inicial)
 {
-    List* stack = list_create();
-    list_pushBack(stack, &inicial);
+    List* stack = list_create(); // Creamos la lista que funciona como pila
+
+    State* inicio = malloc(sizeof(State));
+    *inicio = inicial;
+
+    list_pushBack(stack, inicio);
     int visitado[N][N] = {0};
 
     while(list_size(stack) > 0)
@@ -115,7 +130,7 @@ void dfs(State inicial)
             return;
         }
 
-        List* vecinos = get_adjacent_nodes(current);
+        List* vecinos = get_adjacent_nodes(current); // obtenemos a los vecinos
         State* next = list_first(vecinos);
         
         while(next != NULL)
@@ -125,6 +140,79 @@ void dfs(State inicial)
         }
     }
 }
+
+void bfs(State inicial)
+{
+    List* busqueda = list_create();
+
+    State* inicio = malloc(sizeof(State));
+    *inicio = inicial;
+    
+    list_pushBack(busqueda, inicio);
+    int visitado[N][N] = {0};
+
+    while(list_size(busqueda) != 0)
+    {
+        State* current = list_popFront(busqueda); // 4
+        
+        if(visitado[current->x][current->y]) continue;
+        visitado[current->x][current->y] = 1; // mARCAmos
+
+        if(is_final(current))
+        {
+            printf("SOLUCION BFS\n");
+            printf("Pasos: %d\n", current->steps);
+            return;
+        }
+
+        List* vecinos = get_adjacent_nodes(current);
+        State* next = list_first(vecinos);
+        while(next != NULL)
+        {
+            list_pushBack(busqueda, next);
+            next = list_next(vecinos);
+        }
+    }
+}
+
+
+void best_first(State inicial)
+{
+    Heap* heap = heap_create();
+
+    State* inicio = malloc(sizeof(State));
+    *inicio = inicial;
+
+    int prioridad_inicial = -(inicio->steps + distancia_L1(inicio));
+    heap_push(heap, inicio, prioridad_inicial);
+
+    int visitados[N][N] = {0};
+    while(heap_top(heap) != NULL)
+    {
+        State* current = (State*) heap_top(heap);
+        heap_pop(heap);
+
+        if(visitados[current->x][current->y]) continue;
+        visitados[current->x][current->y] = 1;
+
+        if(is_final(current))
+        {
+            printf("PUNTO ENCONTRADO\n");
+            printf("Pasos: %d\n", current->steps);
+            return;
+        }
+
+        List* vecinos = get_adjacent_nodes(current);
+        State* next = list_first(vecinos);
+        while(next != NULL)
+        {
+            int prioridad = -(next->steps + distancia_L1(next));
+            heap_push(heap, next, prioridad);
+            next = list_next(vecinos);
+        }
+    }
+}
+
 
 int main() {
     // Inicializar la semilla de aleatoriedad
@@ -192,10 +280,10 @@ int main() {
           dfs(estado_inicial);  
           break;
         case '2':
-          //bfs(estado_inicial);
+          bfs(estado_inicial);
           break;
         case '3':
-          //best_first(estado_inicial);
+          best_first(estado_inicial);
           break;
         }
 
