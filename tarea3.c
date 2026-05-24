@@ -38,8 +38,17 @@ State* transition(State* current, int pos)
     next->x = current->x;
     next->y = current->y;
     next->steps = current->steps + 1;
-    next->actions = NULL;
+    next->actions = list_create();
+    int* primero = list_first(current->actions);
 
+    while(primero != NULL)
+    {
+        list_pushBack(next->actions, primero);
+        primero = list_next(current->actions);
+    }
+
+    list_pushBack(next->actions, (void*)(long)pos);
+    
     for(int i = 0; i < N; i++)
     {
         for(int k = 0; k < N; k++)
@@ -107,6 +116,56 @@ State crearEstadoInicial(int maze[N][N], int dificultad){
     return estado;
 }
 
+
+void mostrar(State* estado)
+{
+    char tablero[N][N];
+    for(int i = 0; i < N; i++)
+    {
+        for(int k = 0; k < N; k++)
+        {
+            if(estado->maze[i][k] == 1)
+            {
+                tablero[i][k] = 'X';
+            }
+            else
+            {
+                tablero[i][k] = ' ';
+            }
+        }
+    }
+
+    int x = 0;
+    int y = 0;
+
+    tablero[x][y] = 'I';
+
+    int* primero = list_first(estado->actions);
+    while(primero != NULL)
+    {
+        int m = (long) primero;
+        if(m == ARRIBA) x--;
+        else if(m == ABAJO) x++;
+        else if(m == DERECHA) y++;
+        else if(m == IZQUIERDA) y--;
+
+        if(x != N-1 || y != N-1) tablero[x][y] = '+';
+        primero = list_next(estado->actions);
+    }
+    tablero[N-1][N-1] = 'M';
+    printf("\nCAMINO TOMADO:\n\n");
+
+    for(int i = 0; i < N; i++)
+    {
+        for(int k = 0; k < N; k++)
+        {
+            printf(" %c ", tablero[i][k]);
+        }
+        printf("\n");
+    }
+}
+
+
 void dfs(State inicial)
 {
     List* stack = list_create(); // Creamos la lista que funciona como pila
@@ -116,17 +175,22 @@ void dfs(State inicial)
 
     list_pushBack(stack, inicio);
     int visitado[N][N] = {0};
-
+    int iteraciones = 0;
     while(list_size(stack) > 0)
     {
         State* current = list_popBack(stack);
-        if(visitado[current->x][current->y]) continue;
-        
+        iteraciones++;
+        if(visitado[current->x][current->y])
+        {
+            continue;
+        }
         visitado[current->x][current->y] = 1;
         if(is_final(current))
         {
             printf("SOLUCION DFS\n");
-            printf("Pasos: %d\n", current->steps);
+            printf("Cantidad de pasos: %d\n", current->steps);
+            printf("Cantidad de Iteraciones: %d\n", iteraciones);
+            mostrar(current);
             return;
         }
 
@@ -138,6 +202,8 @@ void dfs(State inicial)
             list_pushBack(stack, next);
             next = list_next(vecinos);
         }
+        list_clean(vecinos);
+        free(vecinos);
     }
 }
 
@@ -150,18 +216,20 @@ void bfs(State inicial)
     
     list_pushBack(busqueda, inicio);
     int visitado[N][N] = {0};
-
+    int iteraciones = 0;
     while(list_size(busqueda) != 0)
     {
         State* current = list_popFront(busqueda); // 4
-        
+        iteraciones++;
         if(visitado[current->x][current->y]) continue;
         visitado[current->x][current->y] = 1; // mARCAmos
 
         if(is_final(current))
         {
             printf("SOLUCION BFS\n");
-            printf("Pasos: %d\n", current->steps);
+            printf("Cantidad de pasos: %d\n", current->steps);
+            printf("Cantidad de Iteraciones: %d\n", iteraciones);
+            mostrar(current);
             return;
         }
 
@@ -172,6 +240,8 @@ void bfs(State inicial)
             list_pushBack(busqueda, next);
             next = list_next(vecinos);
         }
+        list_clean(vecinos);
+        free(vecinos);
     }
 }
 
@@ -185,20 +255,22 @@ void best_first(State inicial)
 
     int prioridad_inicial = -(inicio->steps + distancia_L1(inicio));
     heap_push(heap, inicio, prioridad_inicial);
-
     int visitados[N][N] = {0};
+    int iteraciones = 0;
     while(heap_top(heap) != NULL)
     {
         State* current = (State*) heap_top(heap);
         heap_pop(heap);
-
+        iteraciones++;
         if(visitados[current->x][current->y]) continue;
         visitados[current->x][current->y] = 1;
 
         if(is_final(current))
         {
             printf("PUNTO ENCONTRADO\n");
-            printf("Pasos: %d\n", current->steps);
+            printf("Cantidad de pasos: %d\n", current->steps);
+            printf("Cantidad de Iteraciones: %d\n", iteraciones);
+            mostrar(current);
             return;
         }
 
@@ -210,9 +282,10 @@ void best_first(State inicial)
             heap_push(heap, next, prioridad);
             next = list_next(vecinos);
         }
+        list_clean(vecinos);
+        free(vecinos);
     }
 }
-
 
 int main() {
     // Inicializar la semilla de aleatoriedad
