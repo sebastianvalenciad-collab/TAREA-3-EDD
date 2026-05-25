@@ -1,5 +1,13 @@
 ## Descripcion
-Este programa permite cargar un catálogo de películas y realizar búsquedas por género, director, década o ID. Además, incluye una watchlist donde el usuario puede agregar películas para ver más tarde, eliminarlas o visualizar las películas guardadas. Finalmente, el sistema permite calificar las películas vistas por los usuarios.
+Este proyecto implementa distintos algoritmos de búsqueda sobre un laberinto generado automáticamente. El programa representa el laberinto mediante una matriz NxN donde existen espacios libres y obstáculos, y el objetivo es encontrar un camino desde el punto inicial hasta la meta.
+
+Se implementan tres métodos de búsqueda:
+
+1. Búsqueda en Profundidad (DFS)
+2. Búsqueda en Anchura (BFS)
+3. Búsqueda Best First / A*
+
+Además, el programa muestra visualmente el camino encontrado, calcula la cantidad de pasos realizados y mide el número de iteraciones necesarias para encontrar la solución. Para la implementación se utilizan TDAs como listas y heaps.
 
 ## Como ejecutar el codigo
 Este programa fue realizado en replit asi que les explicare como hacerlo funcionar en esta plataforma.
