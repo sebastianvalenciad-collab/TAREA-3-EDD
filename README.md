@@ -1,7 +1,18 @@
-En este *repl* puedes encontrar varios ejemplos que te pueden ayudar con las tareas de estructura.
+## Descripcion
+Este programa permite cargar un catálogo de películas y realizar búsquedas por género, director, década o ID. Además, incluye una watchlist donde el usuario puede agregar películas para ver más tarde, eliminarlas o visualizar las películas guardadas. Finalmente, el sistema permite calificar las películas vistas por los usuarios.
 
-## Código de Ejemplo (tarea1)
-Para ejecutar el ejemplo tarea1 primero debemos compilar (en la carpeta raíz)
+## Como ejecutar el codigo
+Este programa fue realizado en replit asi que les explicare como hacerlo funcionar en esta plataforma.
+Para ejecutar la tarea1 primero debemos seguir los siguientes pasos:
+
+1. Accede al repositorio de este codigo, y crea un nuevo repositorio usando el template
+````
+https://github.com/sebastianvalenciad-collab/TAREA-3-EDD
+````
+2. Coloca en la opción Import code or design. Luego importa desde Github.
+3. Pega la dirección de tu repositorio y luego impórtalo (Import from Github).
+4. Agrega una pestaña “Shell”
+5. y ejecuta los siguientes codigos:
 ````
 gcc tdas/*.c tarea3.c -Wno-unused-result -o tarea3
 ````
@@ -11,23 +22,16 @@ Y luego ejecutar:
 ./tarea3
 ````
 
-## TDAs
-En la carpeta `tdas` se encuentran implementados distintos TDAs que puedes utilizar (lista, pila, cola, cola con prioridad y mapas). 
+## Funcionalidades
 
-Las implementaciones no son las más eficientes (todas usan como estructura de datos una **lista enlazada**), por lo que puedes reemplazarlas por las que has realizado en los labs.
+1. Implementación de búsqueda en profundidad (DFS).
+2. Implementación de búsqueda en anchura (BFS).
+3. Implementación de búsqueda Best First / A* usando Heap.
 
-## Otros códigos (en carpeta examples)
-Para ejecutar los distintos ejemplos que hay en la carpeta `examples`, primero debes compilarlos. Si estamos en la carpeta raíz:
-````
-gcc tdas/*.c examples/example2_menu.c -Wno-unused-result -o example
-````
-Y luego ejecutarlos:
-````
-./example
-````
+### Posibles fallas:
 
-Se incluyen los siguientes ejemplos:
-* `example1_list`: Uso del TDA Lista, inserción y eliminación de elementos.
-* `example2_menu`: Ejemplo de menú con submenús.
-* `example3_readcsv`: Ejemplo de lectura desde un archivo csv y almacenamiento en datos estructurados.
-* `example4_map`: Ejemplo de uso del TDA mapa.
+1. El DFS (busqueda en profundidad) no garantiza el camino mas corto.
+2. El BFS ()
+
+
+## Ejemplo de uso
